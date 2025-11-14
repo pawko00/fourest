@@ -1,0 +1,37 @@
+{
+  "name": "focusforest",
+  "version": "1.0.0",
+  "description": "Focus management application inspired by Forest app",
+  "scripts": {
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "build": "npm run build:backend && npm run build:frontend",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "docker:rebuild": "docker-compose down && docker-compose up -d --build",
+    "k8s:deploy": "kubectl apply -f k8s/",
+    "k8s:delete": "kubectl delete -f k8s/",
+    "k8s:status": "kubectl get pods && kubectl get services"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/focusforest.git"
+  },
+  "keywords": [
+    "focus",
+    "productivity",
+    "forest",
+    "pomodoro",
+    "time-management"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
