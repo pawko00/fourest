@@ -20,6 +20,9 @@ export default {
           800: '#166534',
           900: '#14532d',
         },
+        // custom border color variable so utilities like `border-border` exist
+        // and can be themed via CSS variables defined in src/index.css
+        border: 'var(--border)',
       },
       animation: {
         'grow': 'grow 1s ease-in-out infinite',

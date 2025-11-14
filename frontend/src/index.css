@@ -3,6 +3,15 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* default (light) border color */
+    --border: #e5e7eb; /* gray-200 */
+  }
+
+  .dark {
+    /* dark mode border color */
+    --border: #374151; /* gray-700 */
+  }
   * {
     @apply border-border;
   }
