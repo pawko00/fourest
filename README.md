@@ -14,18 +14,78 @@ Aplikacja do zarządzania czasem i koncentracją, inspirowana aplikacją Forest.
 
 ## 🏗️ Architektura
 
+### Architektura Mikroserwisów
+
 ```
-┌─────────────────┐      ┌─────────────────┐      ┌─────────────────┐
-│                 │      │                 │      │                 │
-│    Frontend     │◄────►│     Backend     │◄────►│   PostgreSQL    │
-│  React + TS     │      │  Express + TS   │      │    Database     │
-│                 │      │                 │      │                 │
-└─────────────────┘      └─────────────────┘      └─────────────────┘
+┌─────────────────┐      ┌─────────────────┐
+│                 │      │                 │
+│    Frontend     │◄────►│     Ingress     │
+│  React + TS     │      │   Controller    │
+│                 │      │                 │
+└─────────────────┘      └────────┬────────┘
+                                  │
+                    ┌─────────────┼─────────────┐
+                    │             │             │
+              ┌─────▼─────┐ ┌─────▼─────┐ ┌─────▼─────┐
+              │   Auth    │ │  Session  │ │   Stats   │
+              │  Service  │ │  Service  │ │  Service  │
+              │  :3001    │ │  :3002    │ │  :3003    │
+              └─────┬─────┘ └─────┬─────┘ └─────┬─────┘
+                    │             │             │
+                    └─────────────┼─────────────┘
+                                  │
+                         ┌────────▼────────┐
+                         │                 │
+                         │   PostgreSQL    │
+                         │    Database     │
+                         │                 │
+                         └─────────────────┘
+```
+
+### Struktura Mikroserwisów
+
+```
+services/
+├── auth-service/          # Logowanie, rejestracja, profil użytkownika
+│   ├── src/
+│   │   ├── server.ts
+│   │   ├── data-source.ts
+│   │   ├── controllers/
+│   │   ├── entities/
+│   │   ├── middleware/
+│   │   ├── routes/
+│   │   └── utils/
+│   ├── Dockerfile
+│   └── package.json
+│
+├── session-service/       # Sesje skupienia, typy drzew
+│   ├── src/
+│   │   ├── server.ts
+│   │   ├── data-source.ts
+│   │   ├── controllers/
+│   │   ├── entities/
+│   │   ├── middleware/
+│   │   ├── routes/
+│   │   └── seed/
+│   ├── Dockerfile
+│   └── package.json
+│
+└── stats-service/         # Statystyki, wykresy
+    ├── src/
+    │   ├── server.ts
+    │   ├── data-source.ts
+    │   ├── controllers/
+    │   ├── entities/
+    │   ├── middleware/
+    │   └── routes/
+    ├── Dockerfile
+    └── package.json
 ```
 
 ## 🚀 Stack Technologiczny
 
 ### Frontend
+
 - React 18 + TypeScript
 - Vite (build tool)
 - TailwindCSS (styling)
@@ -35,6 +95,7 @@ Aplikacja do zarządzania czasem i koncentracją, inspirowana aplikacją Forest.
 - Zustand (state management)
 
 ### Backend
+
 - Node.js + Express + TypeScript
 - JWT (authentication)
 - bcrypt (password hashing)
@@ -43,6 +104,7 @@ Aplikacja do zarządzania czasem i koncentracją, inspirowana aplikacją Forest.
 - Express Validator (validation)
 
 ### DevOps
+
 - Docker & Docker Compose
 - Kubernetes ready
 - Environment configuration
@@ -50,6 +112,7 @@ Aplikacja do zarządzania czasem i koncentracją, inspirowana aplikacją Forest.
 ## 📦 Instalacja i uruchomienie
 
 ### Wymagania
+
 - Node.js 18+
 - PostgreSQL 14+
 - Docker (opcjonalnie)
@@ -57,22 +120,26 @@ Aplikacja do zarządzania czasem i koncentracją, inspirowana aplikacją Forest.
 ### Lokalne uruchomienie
 
 #### 1. Klonowanie repozytorium
+
 ```bash
 cd ProjektowanieUniwersalne
 ```
 
 #### 2. Uruchomienie z Docker Compose (zalecane)
+
 ```bash
 docker-compose up -d
 ```
 
 Aplikacja będzie dostępna pod:
+
 - Frontend: http://localhost:5173
 - Backend: http://localhost:3000
 
 #### 3. Lokalne uruchomienie (bez Dockera)
 
 **Backend:**
+
 ```bash
 cd backend
 npm install
@@ -82,6 +149,7 @@ npm run dev
 ```
 
 **Frontend:**
+
 ```bash
 cd frontend
 npm install
@@ -147,6 +215,37 @@ TreeTypes
 
 ## 🐳 Kubernetes Deployment
 
+Projekt zawiera pełną konfigurację Kubernetes z następującymi elementami:
+
+### Zasoby K8s (`k8s/`)
+
+- `namespace.yaml` - Osobny namespace `focusforest`
+- `rbac.yaml` - ServiceAccounts, Roles, RoleBindings
+- `ingress.yaml` - Ingress Controller dla routingu
+- `network-policy.yaml` - Izolacja sieciowa między serwisami
+- `hpa.yaml` - HorizontalPodAutoscaler dla automatycznego skalowania
+- `auth-service.yaml` - Deployment auth-service
+- `session-service.yaml` - Deployment session-service
+- `stats-service.yaml` - Deployment stats-service
+- `postgres.yaml` - Deployment bazy danych
+- `frontend.yaml` - Deployment frontendu
+
+### Uruchomienie na K8s
+
+```bash
+# Zainstaluj NGINX Ingress Controller
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+
+# Uruchom deployment
+chmod +x scripts/deploy-k8s.sh
+./scripts/deploy-k8s.sh
+
+# Dodaj do /etc/hosts
+echo "127.0.0.1 focusforest.local" | sudo tee -a /etc/hosts
+```
+
+### Lub ręcznie:
+
 ```bash
 kubectl apply -f k8s/
 ```
@@ -154,22 +253,26 @@ kubectl apply -f k8s/
 ## 📝 API Endpoints
 
 ### Auth
+
 - `POST /api/auth/register` - Rejestracja
 - `POST /api/auth/login` - Logowanie
 - `GET /api/auth/me` - Profil użytkownika
 
 ### Sessions
+
 - `POST /api/sessions` - Rozpocznij sesję
 - `PUT /api/sessions/:id` - Zakończ sesję
 - `GET /api/sessions` - Lista sesji
 - `DELETE /api/sessions/:id` - Usuń sesję
 
 ### Stats
+
 - `GET /api/stats` - Statystyki użytkownika
 - `GET /api/stats/weekly` - Statystyki tygodniowe
 - `GET /api/stats/monthly` - Statystyki miesięczne
 
 ### User
+
 - `GET /api/user/profile` - Profil
 - `PUT /api/user/profile` - Aktualizuj profil
 - `PUT /api/user/password` - Zmień hasło
