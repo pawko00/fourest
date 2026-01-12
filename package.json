@@ -13,10 +13,7 @@
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs -f",
-    "docker:rebuild": "docker-compose down && docker-compose up -d --build",
-    "k8s:deploy": "kubectl apply -f k8s/",
-    "k8s:delete": "kubectl delete -f k8s/",
-    "k8s:status": "kubectl get pods && kubectl get services"
+    "docker:rebuild": "docker-compose down && docker-compose up -d --build"
   },
   "repository": {
     "type": "git",

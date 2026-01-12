@@ -1,0 +1,19 @@
+# Service dla frontendu - load balancing między replikami
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: fourest
+  labels:
+    app: fourest
+    component: frontend
+spec:
+  type: ClusterIP
+  selector:
+    app: fourest
+    component: frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP

@@ -1,0 +1,113 @@
+# Deployment dla bezstanowego backendu Node.js
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: fourest
+  labels:
+    app: fourest
+    component: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fourest
+      component: backend
+  template:
+    metadata:
+      labels:
+        app: fourest
+        component: backend
+    spec:
+      serviceAccountName: fourest-backend-sa
+      containers:
+        - name: backend
+          image: fourest-backend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            # Konfiguracja z ConfigMap
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: fourest-config
+                  key: NODE_ENV
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: fourest-config
+                  key: PORT
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: fourest-config
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: fourest-config
+                  key: DB_PORT
+            - name: DB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: fourest-config
+                  key: DB_DATABASE
+            - name: DB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: fourest-config
+                  key: DB_USERNAME
+            - name: JWT_EXPIRES_IN
+              valueFrom:
+                configMapKeyRef:
+                  name: fourest-config
+                  key: JWT_EXPIRES_IN
+            # Dane wrażliwe z Secret
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: fourest-secrets
+                  key: DB_PASSWORD
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: fourest-secrets
+                  key: JWT_SECRET
+          # Limity i żądania zasobów
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          # Health checks
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+      # Zapewnienie rozproszenia podów na różnych węzłach
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: fourest
+                    component: backend
+                topologyKey: kubernetes.io/hostname

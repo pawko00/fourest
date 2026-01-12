@@ -1,0 +1,70 @@
+# Deployment dla bezstanowego frontendu React/Vite
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: fourest
+  labels:
+    app: fourest
+    component: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fourest
+      component: frontend
+  template:
+    metadata:
+      labels:
+        app: fourest
+        component: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: fourest-frontend:v2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              name: http
+          env:
+            - name: VITE_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: fourest-config
+                  key: VITE_API_URL
+          # Limity i żądania zasobów
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          # Health checks
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+      # Zapewnienie rozproszenia podów na różnych węzłach
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: fourest
+                    component: frontend
+                topologyKey: kubernetes.io/hostname

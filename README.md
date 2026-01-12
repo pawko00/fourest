@@ -14,72 +14,50 @@ Aplikacja do zarządzania czasem i koncentracją, inspirowana aplikacją Forest.
 
 ## 🏗️ Architektura
 
-### Architektura Mikroserwisów
+### Struktura Projektu (Monolit)
+
+Aplikacja składa się z dwóch głównych części spiętych docker-compose:
+
+1. **Frontend** (React + Vite)
+2. **Backend** (Node.js + Express)
+3. **Baza Danych** (PostgreSQL)
 
 ```
 ┌─────────────────┐      ┌─────────────────┐
 │                 │      │                 │
-│    Frontend     │◄────►│     Ingress     │
-│  React + TS     │      │   Controller    │
-│                 │      │                 │
+│    Frontend     │◄────►│     Backend     │
+│  React + TS     │      │  Node + Exp     │
+│   :5173         │      │    :3000        │
 └─────────────────┘      └────────┬────────┘
-                                  │
-                    ┌─────────────┼─────────────┐
-                    │             │             │
-              ┌─────▼─────┐ ┌─────▼─────┐ ┌─────▼─────┐
-              │   Auth    │ │  Session  │ │   Stats   │
-              │  Service  │ │  Service  │ │  Service  │
-              │  :3001    │ │  :3002    │ │  :3003    │
-              └─────┬─────┘ └─────┬─────┘ └─────┬─────┘
-                    │             │             │
-                    └─────────────┼─────────────┘
                                   │
                          ┌────────▼────────┐
                          │                 │
                          │   PostgreSQL    │
-                         │    Database     │
+                         │    :5432        │
                          │                 │
                          └─────────────────┘
 ```
 
-### Struktura Mikroserwisów
+### Struktura Folderów
 
 ```
-services/
-├── auth-service/          # Logowanie, rejestracja, profil użytkownika
+fourest/
+├── backend/            # API Monolityczne (Express)
 │   ├── src/
-│   │   ├── server.ts
-│   │   ├── data-source.ts
 │   │   ├── controllers/
 │   │   ├── entities/
 │   │   ├── middleware/
 │   │   ├── routes/
-│   │   └── utils/
+│   │   └── server.ts
 │   ├── Dockerfile
 │   └── package.json
 │
-├── session-service/       # Sesje skupienia, typy drzew
+├── frontend/           # Aplikacja Klienta (React)
 │   ├── src/
-│   │   ├── server.ts
-│   │   ├── data-source.ts
-│   │   ├── controllers/
-│   │   ├── entities/
-│   │   ├── middleware/
-│   │   ├── routes/
-│   │   └── seed/
 │   ├── Dockerfile
 │   └── package.json
 │
-└── stats-service/         # Statystyki, wykresy
-    ├── src/
-    │   ├── server.ts
-    │   ├── data-source.ts
-    │   ├── controllers/
-    │   ├── entities/
-    │   ├── middleware/
-    │   └── routes/
-    ├── Dockerfile
-    └── package.json
+└── docker-compose.yml  # Definicja kontenerów
 ```
 
 ## 🚀 Stack Technologiczny

@@ -1,0 +1,56 @@
+# ServiceAccount dla backendu
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fourest-backend-sa
+  namespace: fourest
+  labels:
+    app: fourest
+    component: backend
+
+---
+# Role - uprawnienia w ramach namespace'u
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: fourest-backend-role
+  namespace: fourest
+  labels:
+    app: fourest
+    component: backend
+rules:
+  # Dostęp do ConfigMap (odczyt)
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch"]
+  # Dostęp do Secrets (odczyt) - potrzebne dla zmiennych środowiskowych
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]
+  # Dostęp do Pods (odczyt) - dla health checks i diagnostyki
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+  # Dostęp do Services (odczyt)
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["get", "list", "watch"]
+
+---
+# RoleBinding - przypisanie roli do ServiceAccount
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: fourest-backend-rolebinding
+  namespace: fourest
+  labels:
+    app: fourest
+    component: backend
+subjects:
+  - kind: ServiceAccount
+    name: fourest-backend-sa
+    namespace: fourest
+roleRef:
+  kind: Role
+  name: fourest-backend-role
+  apiGroup: rbac.authorization.k8s.io

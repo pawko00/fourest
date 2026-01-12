@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User as UserIcon, Mail, Shield, Palette, Volume2 } from 'lucide-react';
+import { User as UserIcon, Mail, Shield, Volume2 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { userApi } from '../lib/api';
 import toast from 'react-hot-toast';
@@ -8,7 +8,7 @@ export default function Profile() {
   const { user, updateUser } = useAuthStore();
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState(user?.username || '');
-  const [soundsEnabled, setSoundsEnabled] = useState(user?.soundsEnabled || true);
+  const [soundsEnabled, setSoundsEnabled] = useState<boolean>(user?.soundsEnabled ?? true);
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');

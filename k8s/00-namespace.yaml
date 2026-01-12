@@ -1,0 +1,8 @@
+# Namespace - izolacja dla całej aplikacji
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fourest
+  labels:
+    app: fourest
+    environment: production

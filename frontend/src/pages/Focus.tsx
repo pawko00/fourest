@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TreePine, Play, Pause, Check } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { sessionsApi } from '../lib/api';
 import toast from 'react-hot-toast';
 import type { FocusSession } from '../types';

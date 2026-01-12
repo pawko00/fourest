@@ -1,0 +1,17 @@
+# PersistentVolumeClaim dla bazy danych PostgreSQL
+# Używane przez StatefulSet - dane nie zostaną utracone po restarcie
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: fourest
+  labels:
+    app: fourest
+    component: database
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: fourest-storage
+  resources:
+    requests:
+      storage: 5Gi

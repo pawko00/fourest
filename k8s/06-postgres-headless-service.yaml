@@ -1,0 +1,21 @@
+# Headless Service dla PostgreSQL StatefulSet
+# clusterIP: None umożliwia bezpośrednią komunikację z instancjami
+# DNS: postgres-0.postgres-headless.fourest.svc.cluster.local
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-headless
+  namespace: fourest
+  labels:
+    app: fourest
+    component: database
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app: fourest
+    component: database
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432

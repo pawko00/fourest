@@ -1,0 +1,19 @@
+# Service dla backendu - load balancing między replikami
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: fourest
+  labels:
+    app: fourest
+    component: backend
+spec:
+  type: ClusterIP
+  selector:
+    app: fourest
+    component: backend
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+      protocol: TCP

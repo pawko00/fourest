@@ -1,0 +1,45 @@
+# Produkcyjny Dockerfile dla backendu
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Kopiowanie plików konfiguracyjnych
+COPY package*.json ./
+COPY tsconfig.json ./
+
+# Instalacja WSZYSTKICH zależności (w tym devDependencies dla tsc)
+RUN npm ci
+
+# Kopiowanie źródeł
+COPY src ./src
+
+# Budowanie aplikacji
+RUN npm run build
+
+# Stage produkcyjny
+FROM node:18-alpine AS production
+
+WORKDIR /app
+
+# Tworzenie użytkownika bez uprawnień root
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+# Kopiowanie tylko produkcyjnych zależności
+COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
+
+# Kopiowanie zbudowanej aplikacji
+COPY --from=builder /app/dist ./dist
+
+# Zmiana właściciela plików
+RUN chown -R nodejs:nodejs /app
+
+# Przełączenie na użytkownika bez root
+USER nodejs
+
+# Eksponowanie portu
+EXPOSE 3000
+
+# Uruchomienie aplikacji
+CMD ["node", "dist/server.js"]

@@ -1,0 +1,23 @@
+# ConfigMap - konfiguracja środowiskowa (bez wrażliwych danych)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fourest-config
+  namespace: fourest
+  labels:
+    app: fourest
+data:
+  # Konfiguracja bazy danych
+  DB_HOST: "postgres-0.postgres-headless.fourest.svc.cluster.local"
+  DB_PORT: "5432"
+  DB_DATABASE: "focusforest"
+  DB_USERNAME: "focusforest"
+  
+  # Konfiguracja backendu
+  # Używamy "development" aby TypeORM synchronizował schemat bazy
+  NODE_ENV: "development"
+  PORT: "3000"
+  JWT_EXPIRES_IN: "7d"
+  
+  # Konfiguracja frontendu
+  VITE_API_URL: "/api"
