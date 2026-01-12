@@ -12,12 +12,13 @@ data:
   DB_PORT: "5432"
   DB_DATABASE: "focusforest"
   DB_USERNAME: "focusforest"
-  
+
   # Konfiguracja backendu
   # Używamy "development" aby TypeORM synchronizował schemat bazy
   NODE_ENV: "development"
   PORT: "3000"
   JWT_EXPIRES_IN: "7d"
-  
+  CORS_ORIGIN: "*"
+
   # Konfiguracja frontendu
   VITE_API_URL: "/api"

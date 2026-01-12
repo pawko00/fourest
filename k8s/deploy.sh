@@ -64,10 +64,10 @@ cd "$SCRIPT_DIR/.."
 log_info "Budowanie obrazów Docker..."
 
 log_info "Budowanie obrazu backendu..."
-docker build -t fourest-backend:latest -f backend/Dockerfile.prod backend/
+docker build -t fourest-backend:v2 -f backend/Dockerfile.prod backend/
 
 log_info "Budowanie obrazu frontendu..."
-docker build -t fourest-frontend:latest -f frontend/Dockerfile.prod frontend/
+docker build -t fourest-frontend:v2 -f frontend/Dockerfile.prod frontend/
 
 # Wdrożenie manifestów Kubernetes
 log_info "Wdrażanie manifestów Kubernetes..."

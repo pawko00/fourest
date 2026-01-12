@@ -64,6 +64,11 @@ spec:
                 configMapKeyRef:
                   name: fourest-config
                   key: JWT_EXPIRES_IN
+            - name: CORS_ORIGIN
+              valueFrom:
+                configMapKeyRef:
+                  name: fourest-config
+                  key: CORS_ORIGIN
             # Dane wrażliwe z Secret
             - name: DB_PASSWORD
               valueFrom:
