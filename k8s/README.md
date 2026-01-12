@@ -1,4 +1,26 @@
-# Fourest - Kubernetes (MicroK8s) Deployment
+# Fourest - Kubernetes (Minikube) Deployment
+
+## Szybki start
+
+### Wymagania
+- **Docker** - https://docs.docker.com/get-docker/
+- **Minikube** - https://minikube.sigs.k8s.io/docs/start/
+- **kubectl** - https://kubernetes.io/docs/tasks/tools/
+
+### Uruchomienie (jedna komenda!)
+
+```bash
+./k8s/deploy.sh
+```
+
+Skrypt automatycznie:
+1. Uruchomi Minikube (jeśli nie działa)
+2. Włączy wymagane dodatki (ingress, storage)
+3. Zbuduje obrazy Docker
+4. Wdroży wszystkie komponenty
+5. Wyświetli adres aplikacji
+
+---
 
 ## Architektura
 

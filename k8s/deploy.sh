@@ -16,23 +16,41 @@ log_info() { echo -e "${GREEN}[INFO]${NC} $1"; }
 log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
+# Sprawdzenie czy Docker jest zainstalowany
+if ! command -v docker &> /dev/null; then
+    log_error "Docker nie jest zainstalowany!"
+    log_info "Zainstaluj Docker: https://docs.docker.com/get-docker/"
+    exit 1
+fi
+
 # Sprawdzenie czy Minikube jest zainstalowany
 if ! command -v minikube &> /dev/null; then
     log_error "Minikube nie jest zainstalowany!"
+    log_info "Zainstaluj Minikube: https://minikube.sigs.k8s.io/docs/start/"
+    exit 1
+fi
+
+# Sprawdzenie czy kubectl jest zainstalowany
+if ! command -v kubectl &> /dev/null; then
+    log_error "kubectl nie jest zainstalowany!"
+    log_info "Zainstaluj kubectl: https://kubernetes.io/docs/tasks/tools/"
     exit 1
 fi
 
 # Sprawdzenie statusu Minikube
 log_info "Sprawdzanie statusu Minikube..."
-if ! minikube status | grep -q "Running"; then
+if ! minikube status 2>/dev/null | grep -q "Running"; then
     log_warn "Minikube nie jest uruchomiony. Uruchamiam..."
-    minikube start
+    minikube start --memory=4096 --cpus=2
 fi
 
 # Włączenie wymaganych dodatków
 log_info "Włączanie wymaganych dodatków Minikube..."
 minikube addons enable ingress
 minikube addons enable storage-provisioner
+
+log_info "Oczekiwanie na gotowość Ingress Controller..."
+sleep 10
 
 # Konfiguracja Docker do używania Minikube
 log_info "Konfiguracja środowiska Docker dla Minikube..."
