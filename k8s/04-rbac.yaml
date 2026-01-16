@@ -19,19 +19,15 @@ metadata:
     app: fourest
     component: backend
 rules:
-  # Dostęp do ConfigMap (odczyt)
   - apiGroups: [""]
     resources: ["configmaps"]
     verbs: ["get", "list", "watch"]
-  # Dostęp do Secrets (odczyt) - potrzebne dla zmiennych środowiskowych
   - apiGroups: [""]
     resources: ["secrets"]
     verbs: ["get", "list", "watch"]
-  # Dostęp do Pods (odczyt) - dla health checks i diagnostyki
   - apiGroups: [""]
     resources: ["pods"]
     verbs: ["get", "list", "watch"]
-  # Dostęp do Services (odczyt)
   - apiGroups: [""]
     resources: ["services"]
     verbs: ["get", "list", "watch"]

@@ -1,5 +1,4 @@
 # PersistentVolumeClaim dla bazy danych PostgreSQL
-# Używane przez StatefulSet - dane nie zostaną utracone po restarcie
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:

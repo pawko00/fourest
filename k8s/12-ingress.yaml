@@ -10,10 +10,8 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    # Akceptuje localhost (dla macOS) i fourest.local (dla Linux)
     - http:
         paths:
-          # 1. Ścieżka dla API - przekazuje /api/* jako /api/* do backendu
           - path: /api
             pathType: Prefix
             backend:
@@ -22,7 +20,6 @@ spec:
                 port:
                   number: 3000
 
-          # 2. Ścieżka dla Frontendu (domyślna)
           - path: /
             pathType: Prefix
             backend:

@@ -1,5 +1,4 @@
 # StorageClass dla dynamicznego przydzielania zasobów dyskowych
-# Używa domyślnego provisionera Minikube (hostpath)
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
